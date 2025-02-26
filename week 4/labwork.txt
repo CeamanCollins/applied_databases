@@ -1,0 +1,22 @@
+2. manu_code
+
+3. select manu_code, manu_name, concat(left(manu_details, 10), '...') manu_details from manufacturer;
+
+4. select format(avg(length(manu_name)), 0) as manu_name from manufacturer;
+
+5. select *, if(fuel="petrol", "1.45", "1.30") as cost from vehicle;
+
+6. select v.reg, v.manu_code, m.manu_name from vehicle v left join manufacturer m on v.manu_code = m.manu_code;
+
+7. select v.manu_code, m.manu_name, v.reg from vehicle v left join manufacturer m on v.manu_code = m.manu_code;
+
+8. select m.manu_code, m.manu_name, v.reg from vehicle v right join manufacturer m on v.manu_code = m.manu_code;
+
+9. CREATE PROCEDURE price_less_than(p decimal(8,2))
+DETERMINISTIC
+BEGIN
+	SELECT v.reg, v.manu_code, m.manu_name, v.mileage, v.price 
+	FROM vehicle v 
+    INNER JOIN manufacturer m ON v.manu_code = m.manu_code 
+	WHERE v.price < p order by v.price;
+END;

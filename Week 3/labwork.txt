@@ -1,0 +1,83 @@
+2:
+select emp_no, first_name, UCASE(last_name) as last_name from employees limit 10; 
+
+3:
+select * from employees 
+order by length(last_name), last_name, length(first_name), first_name;
+
+4:
+select *, concat(substring(first_name, 1, 1), substring(last_name, 1, 1)) 
+as initials from employees limit 10;
+
+5:
+select * from employees where gender = "F"
+and year(birth_date) between 1950 and 1959 
+and hire_date between '1988-09-01' and '1991-02-28';
+
+6:
+select emp_no, format(avg(salary), 2) from salaries;
+
+7:
+select emp_no, format(avg(salary), 2) from salaries 
+group by emp_no;
+
+8:
+select emp_no, format(max(salary), 2) from salaries
+group by emp_no;  
+
+9:
+select emp_no, format(avg(salary), 2) from salaries 
+where (emp_no in (10001, 10021, 10033, 10087)) 
+and salary>80000 
+group by emp_no;
+
+10:
+select emp_no, round(avg(salary))
+from salaries
+group by emp_no
+having avg(salary) > 90000;
+
+11:
+select emp_no as ID, IF(gender="M","Mr.", "Ms.") as Title, first_name Name, last_name as Surname, gender as Gender
+from employees
+order by emp_no limit 15;
+
+12:
+select emp_no, max(salary),
+CASE
+    WHEN max(salary) < 40000 then "30%"      
+    WHEN max(salary) < 60000 then "40%"      
+    WHEN max(salary) < 80000 then "50%"      
+    ELSE "60%" 
+END as "Tax Bracket"
+from salaries
+group by emp_no
+order by max(salary);
+
+13:
+select *, if(datediff(to_date,from_date)>365,"Over 1 yr","Under 1 yr") Time
+from salaries;
+
+14:
+create function age(birth date, hire date) 
+RETURNS float(5,1) 
+deterministic
+begin 
+    return round(datediff(hire, birth)/365,1); 
+end//
+
+15:
+create procedure hires(y integer, m integer) 
+begin 
+    select * from employees where (year(hire_date) = y) 
+    and (month(hire_date) = m); 
+end//
+
+16:
+create procedure hires(y integer, m integer) 
+begin 
+    if m is not null then select * from employees 
+        where (year(hire_date) = y) and (month(hire_date) = m);
+    else select * from employees where (year(hire_date) = y);
+    end if; 
+end//

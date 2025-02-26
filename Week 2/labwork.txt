@@ -1,0 +1,57 @@
+2. What is the maximum length of data that can be inserted into the Name attribute of the subject table?
+
+DESCRIBE subject;
+Name varchar(15)
+
+3. What is the Primary Key of the teacher table?
+
+DESCRIBE teacher;
+tid PRI
+
+4. What is the Primary Key of the subject table?
+
+DESCRIBE subject;
+Name PRI
+
+5. Show all data contained in the subject table.
+
+SELECT * FROM subject;
+
+6. Show all names of all subjects that are on the leaving cert.
+
+SELECT name FROM subject WHERE onleavingcert = 1;
+SELECT name FROM subject WHERE onleavingcert;
+SELECT name FROM subject WHERE onleavingcert != 0;
+SELECT name FROM subject WHERE onleavingcert is TRUE;
+SELECT name FROM subject WHERE NOT onleavingcert;
+
+7. Show all name and experience of all teachers who are qualified to teach to Leaving Cert.
+
+SELECT name, experience FROM teacher WHERE level = "L";
+
+8. Show all details of all subjects who are taught by teachers whose title is not “Mr.”
+
+SELECT * FROM teacher WHERE name NOT LIKE "Mr. %";
+
+9. Show all details of all teachers who were born in January, February or March, and who canteach as far as Junior Cert only.
+
+SELECT * FROM `teacher` WHERE ((month(dob)) IN (1, 2, 3)) AND level = 'J';
+SELECT * FROM `teacher` WHERE ((month(dob)) BETWEEN 1 AND 3)) AND level = 'J';
+
+10. Show all unique month names that teachers were born in.
+
+SELECT DISTINCT (monthname(dob)) FROM `teacher`;
+
+11. Show all details of all teachers, sorted by first by experience, then level.
+
+SELECT * FROM teacher ORDER BY `experience`, `level`;
+SELECT * FROM teacher ORDER BY `experience`.`level`;
+
+12. Show all details of all subjects whose 3rd or 4th letter is “l”. Sort them by name.
+
+SELECT * FROM `subject` WHERE `Name` LIKE "__l%" OR WHERE `Name` LIKE "___l%" ORDER BY `Name`; 
+
+13. Show the name of all teachers who have 10, 15, 20, 25, 30, 35, 40, 45, 50, 55 or 60 years experience. Sort from youngest to oldest.
+
+SELECT name FROM `teacher` WHERE `experience` IN (10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60) ORDER BY `dob` desc;
+

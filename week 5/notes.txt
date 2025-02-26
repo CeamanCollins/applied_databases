@@ -1,0 +1,12 @@
+INSERT INTO table (field,field) VALUES ("string","string");
+
+UPDATE table SET column1 = value1, columnN, valueN;
+UPDATE table SET column1 = value1, columnN, valueN WHERE condition;
+
+UPDATE person SET age = age + 1;
+UPDATE person SET name = CONCAT(IF(sex="M", "Mr.","Ms."), name);
+
+DELETE FROM <table>;
+DELETE FROM <table> WHERE condition;
+
+DELETE FROM person WHERE personID = 6;

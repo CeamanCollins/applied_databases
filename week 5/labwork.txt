@@ -1,0 +1,51 @@
+1. Done
+
+2. show create table driver;
+...
+CONSTRAINT `driver_ibfk_1` FOREIGN KEY (`busReg`) REFERENCES `bus` (`reg`) ON DELETE CASCADE
+...
+
+3. INSERT INTO driver (name) VALUES ("Mary");
+ERROR 1364 (HY000): Field 'licenceNo' doesn't have a default value
+
+INSERT INTO driver (name, licenceNo) VALUES ("Bob", “RN2423”);
+ERROR 1054 (42S22): Unknown column '“RN2423”' in 'field list'
+
+INSERT INTO driver (licenceNo, name) VALUES ('RN2423', 'Bob');
+
+INSERT INTO driver (licenceNo, name, busReg) VALUES ('FF88345', 'Sean', '191-G-123');
+Query OK, 1 row affected (0.002 sec)
+
+4. INSERT INTO bus (reg, maxPassengers, fuel) VALUES ('12-G-1323', 34, 'Diesel');
+ERROR 1062 (23000): Duplicate entry '12-G-1323' for key 'PRIMARY'
+
+INSERT INTO bus (reg, maxPassengers, fuel) VALUES ('171-G-885', 84, 'Petrol');
+Query OK, 1 row affected (0.001 sec)
+
+INSERT INTO bus (reg, maxPassengers, fuel) VALUES ('191-D-45890', 120, 'Ethanol');
+ERROR 1265 (01000): Data truncated for column 'fuel' at row 1
+
+SHOW CREATE TABLE bus; / DESCRIBE bus;
+`fuel` enum('Diesel','Petrol','Electric') DEFAULT 'Diesel',
+
+5. UPDATE driver SET licenceNo = concat('T-', licenceNo) WHERE licenceNo like '%F%' or licenceNo like '%R%';
+
+6.  DELETE FROM driver WHERE name = 'Alan';
+Query OK, 1 row affected (0.002 sec)
+
+7. DELETE FROM bus WHERE reg = '161-d-1323';
+Query OK, 1 row affected (0.002 sec)
+
+8. DELETE FROM bus WHERE reg = '161-d-1323';
+Query OK, 1 row affected (0.002 sec)
+
+9. 
+
+10. Done
+
+11. select ROUND(AVG(YEAR(hire_date)),0) average from employees;
+1989
+
+SELECT * FROM employees WHERE YEAR(hire_date) = 1989;
+
+12. SELECT DISTINCT e.emp_no, e.first_name, e.last_name, d.name from employees e left join salaries s on e.emp_no = s.emp_no left join dept d on s.dept_no = d.dept_no;
