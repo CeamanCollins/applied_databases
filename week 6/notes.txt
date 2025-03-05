@@ -1,0 +1,121 @@
+mysql --local-infile=1 -u root -p
+SET GLOBAL local_infile=1;
+secure-file-priv
+
+SHOW VARIABLES;
+SHOW VARIABLES LIKE "%port%"
+
+SET @avg_age := (SELECT AVG(age) FROM people);
+
+SELECT @avg_age
+
+SELECT name, age,
+ CASE 
+   WHEN age < @avg_age THEN "<"
+   WHEN age = @avg_age THEN "="
+   ELSE ">"
+ END AS diff
+FROM people;
+
+SELECT * FROM performance_schema.user_variables_by_thread;
+
+SELECT name,
+    @name_len := CHAR_LENGTH(name) AS Length,
+    CASE
+        WHEN @name_len < 3 THEN "Tiny"
+        WHEN @name_len < 4 THEN "Short"
+        WHEN @name_len < 6 THEN "Medium"
+        ELSE "Long"
+    END AS Length
+FROM people;
+
+CREATE VIEW county_view AS
+SELECT county FROM customers
+UNION
+SELECT county FROM suppliers;
+
+SHOW TABLES;
+DROP VIEW view_name;
+
+SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE, VIEW_DEFINITION
+FROM information_schema.tables
+WHERE TABLE_NAME = "county_view";
+
+SELECT eid,
+    SUM(CASE WHEN type = "SELL" THEN value END) AS "Sell Total",
+    SUM(CASE WHEN type = "BUY" THEN value END) AS "Buy Total"
+FROM stocks
+GROUP BY eid;
+
+CREATE TABLE demo (
+    id INTEGER, 
+    name VARCHAR(50), 
+    age INTEGER, 
+    sex VARCHAR(10), 
+    salary DOUBLE(8,2), 
+    bonus DOUBLE(8,2), 
+    role VARCHAR(50), 
+    PRIMARY KEY(id)
+    ) 
+    ENGINE=innodb;
+
+LOAD DATA LOCAL INFILE '/Users/luxxxer/Python/ATU DA/Applied Databases/import/Demo.csv' 
+INTO TABLE demo 
+FIELDS TERMINATED BY ',' 
+OPTIONALLY ENCLOSED BY '"' 
+LINES TERMINATED BY '\r\n' 
+IGNORE 1 LINES
+(id, name, age, sex, salary, bonus, role)
+
+SELECT *,
+    CASE SUBSTR(sex, 1, 1)
+        WHEN "M" THEN "Male"
+        ELSE "Female"
+    END AS s1 
+FROM demo;
+
+UPDATE demo 
+SET sex =
+    CASE SUBSTR(sex, 1, 1)
+        WHEN "M" THEN "Male"
+        ELSE "Female"
+    END;
+
+SELECT *,
+    CASE sex
+        WHEN "Male" THEN 1
+        ELSE 0
+    END AS isMale
+FROM demo;
+
+ALTER TABLE demo
+ADD isMale BOOLEAN;
+
+UPDATE demo
+SET isMale =
+    CASE sex
+        WHEN "Male" THEN 1
+        ELSE 0
+    END;
+
+SELECT ID, "Salary" as Payment, salary as "Amount" FROM demo;
+SELECT ID, "Bonus" as Payment, bonus as "Amount" FROM demo;
+
+SELECT ID, "Salary" as Payment, salary as "Amount" FROM demo
+UNION
+SELECT ID, "Bonus" as Payment, bonus as "Amount" FROM demo
+ORDER BY ID;
+
+CREATE VIEW payments AS
+SELECT ID, "Salary" as Payment, salary as "Amount" FROM demo
+UNION
+SELECT ID, "Bonus" as Payment, bonus as "Amount" FROM demo
+ORDER BY ID;
+
+DESCRIBE information_schema.tables;
+
+SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE from information_schema.tables
+WHERE TABLE_SCHEMA = "demo2";
+
+SELECT TABLE_SCHEMA, TABLE_NAME, VIEW_DEFINITION from information_schema.views
+WHERE TABLE_SCHEMA = "demo2";

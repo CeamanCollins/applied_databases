@@ -1,0 +1,26 @@
+1. UPDATE salespeople SET name = 'John Smith' where id=1;
+UPDATE salespeople SET name = 'Tom Gordon' where id=3;
+UPDATE salespeople SET name = 'James Durkin' where id=8;
+
+2. UPDATE salespeople 
+SET isNorthernMgr = 
+CASE WHEN sales_area = 'North' 
+AND role = 'Manager' 
+THEN 1 
+ELSE 0 
+END;
+
+3. UPDATE salespeople 
+SET Q1_Range = 
+CASE 
+    WHEN q1 < 10000 THEN '<10K'
+    WHEN q1 < 14999.99 AND q1 >= 10000 THEN '<15K'
+    WHEN q1 < 19999.99 AND q1 >= 15000 THEN '<20K'
+    WHEN q1 < 29999.99 AND q1 >= 20000 THEN '<30K'
+    WHEN q1 > 29999.99 THEN '>30K'
+END;
+
+4. CREATE VIEW totals_view 
+AS SELECT role, sum(q1 + q2 + q3 + q4) AS total_sales 
+FROM salespeople 
+GROUP BY role;

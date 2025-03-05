@@ -1,0 +1,10 @@
+ID,Name,Role,SalesArea,Q1 ,Q2,Q3,Q4
+1,"Smith, John",Salesperson,North,22000,25000,22500,38300
+2,Alice Burns,Salesperson,North,18599.99,22000,26550.12,32100.1
+3,"Gordon, Tom",Salesperson,East,18900,18900,18900,18900
+4,Brian Connors,Senior Salesperson,North,13500,18000,28500,54000
+5,Anne O'Hara,Manager,West,16000,32500,23220.01,28500
+6,John Cullen,Senior Salesperson,South,23500.12,25000.99,27000,32500.9
+7,Martin Browne,Manager,North,15000,16000,17800,21512.1
+8,"Durkin, James",Salesperson,South,18500,19000,17750.5,32555.1
+9,Bernie Murphy,Salesperson,South,11000,23000,34500.1,28512
