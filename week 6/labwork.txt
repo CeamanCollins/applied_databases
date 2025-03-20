@@ -1,8 +1,71 @@
+CREATE TABLE salespeople (
+    id INTEGER, 
+    name VARCHAR(50), 
+    role VARCHAR(50), 
+    sales_area VARCHAR(50), 
+    q1 DOUBLE(8,2), 
+    q2 DOUBLE(8,2), 
+    q3 DOUBLE(8,2), 
+    q4 DOUBLE(8,2), 
+    PRIMARY KEY(id)
+) 
+ENGINE=innodb;
+
+LOAD DATA 
+LOCAL INFILE '/Users/luxxxer/Python/ATU DA/Applied Databases/import/salespeople.csv'
+INTO TABLE salespeople 
+FIELDS TERMINATED BY ',' 
+OPTIONALLY ENCLOSED BY '"' 
+LINES TERMINATED BY '\r\n' 
+IGNORE 1 LINES;
+
 1. UPDATE salespeople SET name = 'John Smith' where id=1;
 UPDATE salespeople SET name = 'Tom Gordon' where id=3;
 UPDATE salespeople SET name = 'James Durkin' where id=8;
 
-2. UPDATE salespeople 
+SELECT *, POSITION(",", IN name) FROM salespeople;
+
+SELECT id, name, SUBSTR(name, POSITION("," in name)+2) as newName from salespeople;
+SELECT id, name, SUBSTR(name, 1, POSITION("," in name)-1) as newName from salespeople;
+SELECT id, name, 
+CASE
+    POSITION(, IN name)
+        WHEN 0 THEN name
+        ELSE
+            CONCAT(
+                SUBSTR(name, 1, POSITION("," in name)-1),
+                " ",
+                SUBSTR(name, POSITION("," in name)+2)
+                ) 
+END AS newName
+FROM salespeople;
+
+SELECT id, name,
+@pos:=POSITION("," in name),
+CASE @pos 
+    WHEN 0 THEN name
+    ELSE CONCAT(
+        SUBSTR(name, 1, @pos - 1),
+        " ",
+        SUBSTR(name, @pos + 2)
+        ) 
+    END AS newName
+
+UPDATE salespeople 
+SET name = 
+    CASE POSITION("," in name) 
+        WHEN 0 THEN name
+        ELSE CONCAT(
+            SUBSTR(name, 1, POSITION("," in name) - 1),
+            " ",
+            SUBSTR(name, POSITION("," in name) + 2)
+            ) 
+    END AS newName
+
+2. ALTER TABLE
+ADD COLUMN isNorthernMgr TINYINT(1);
+
+UPDATE salespeople 
 SET isNorthernMgr = 
 CASE WHEN sales_area = 'North' 
 AND role = 'Manager' 
@@ -10,13 +73,16 @@ THEN 1
 ELSE 0 
 END;
 
-3. UPDATE salespeople 
+3. ALTER TABLE
+ADD COLUMN Q1_Range VARCHAR(4);
+
+UPDATE salespeople 
 SET Q1_Range = 
 CASE 
     WHEN q1 < 10000 THEN '<10K'
-    WHEN q1 < 14999.99 AND q1 >= 10000 THEN '<15K'
-    WHEN q1 < 19999.99 AND q1 >= 15000 THEN '<20K'
-    WHEN q1 < 29999.99 AND q1 >= 20000 THEN '<30K'
+    WHEN q1 < 14999.99 THEN '<15K'
+    WHEN q1 < 19999.99 THEN '<20K'
+    WHEN q1 < 29999.99 THEN '<30K'
     WHEN q1 > 29999.99 THEN '>30K'
 END;
 

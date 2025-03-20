@@ -1,0 +1,46 @@
+scale vertically o -> ( )
+scale horizontally o -> o o o 
+
+CREATE()
+CREATE(:Person)
+CREATE(:Person{name:"John"})
+
+MATCH(n) RETURN name
+MATCH(p:Person) RETURN(p)
+MATCH(p:Person{name:"John"}) RETURN(p)
+MATCH(p:Person) WHERE p.name="John" RETURN p
+MATCH(p:Person) WHERE p.name="John" OR p.name="Tom" RETURN p
+Also: AND OR NOT
+
+MATCH(p:Person) WHERE p.weight IS NOT NULL RETURN p
+MATCH(p:Person) WHERE p.weight IS NOT NULL AND p.sex="M" RETURN p
+
+MATCH(n:Person{name:"Brendan"}) RETURN keys(n)
+
+CREATE CONSTRAINT eid_unique FOR (e:Employee) REQUIRE e.eid IS UNIQUE
+
+avg() max() min() sum()
+
+MATCH(n{sex:"M"}) RETURN avg(n.age)
+MATCH(n) RETURN n.sex, avg(n.age)
+
+MATCH(n{name:"Brendan"}) SET n.age = n.age+1 RETURN n
+MATCH(n{name:"Brendan"}) SET n.height = "6'1\"" RETURN n
+
+MATCH(n{name:"Brendan"}) REMOVE n.height RETURN N
+
+MATCH(p:Person) DELETE p
+MATCH(p:Person) WHERE p.weight IS NULL DELETE p
+
+MERGE(p:PERSON{name:"Brendan"}) RETURN p
+MERGE(p:Person{name:"Tom"}) RETURN p
+
+MATCH(n:Person) RETURN n.name AS Name, avg(n.age) AS AVG
+
+MATCH(n:Person) WITH avg(n.age) as averageAge MATCH(n1:Person) WHERE n1.age < averageAGE RETURN n1.name as Name
+
+MATCH(p:Person{sex:"M"}) WITH avg(p.age) AS avgAge
+MATCH(p1:PERSON{sex:"M"}) WHERE p1.age < avgAge
+RETURN count(p1) as Num_Younger
+
+MATCH (a:Movie {title:'Captain Marvel'}) DETACH DELETE a

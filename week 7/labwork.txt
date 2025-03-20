@@ -1,0 +1,69 @@
+• Find the average age of Students, rounded to the nearest whole number.
+
+MATCH(s:Student) return avg(s.age) as Avg_Age
+
+• Show the name of each student and his/her age.
+
+MATCH(s:Student) return s.name,  s.age
+
+• Find the age of the youngest Student.
+
+MATCH(s:Student) return min(s.age)
+
+• Show the names of students who have a twitter attribute.
+
+MATCH(s:Student) WHERE s.twitter IS NOT NULL return s.name
+
+• Show the number of students who have a twitter attribute.
+
+MATCH(s:Student) WHERE s.twitter IS NOT NULL return count(s.name)
+
+• Show the average of age of people in their 20s, 30s and 40s rounded to one decimal
+place.
+
+MATCH(s:Student) WHERE s.age > 19 AND s.age < 50 RETURN round(avg(s.age),1)
+
+• Show all the properties for the Student Tom.
+
+MATCH(s:Student{name:"Tom"}) RETURN keys(s)
+
+• Increase everyone’s age by 1.
+
+MATCH(s:Student) SET s.age = s.age + 1
+
+• Return the name and age of all males living in Galway
+
+MATCH(s:Student{address:"Galway"}) return s.name, s.age
+
+• Create the following nodes with both :Student and :Lecturer labels 
+
+create(:Student:Lecturer{name:"Walter", age:44, email:"walter@gmit.ie", hair:"black"})
+
+• Show the name, age and hair colour of everyone who is both a Student and a
+Lecturer.
+
+MATCH(sl:Lecturer:Student) RETURN sl.name, sl.age, sl.hair
+
+• Update the twitter attribute of all lectures to have GMIT after their existing twitter name.
+E.g. “@alan” should become “@alanGMIT”.
+
+MATCH(l:Lecturer) SET l.twitter = l.twitter + "GMIT"
+
+• Find the average age of Males and find the youngest Male(s).
+
+MATCH(sl:Lecturer|Student{sex:"M"}) WITH min(sl.age) AS min 
+MATCH(sl:Lecturer|Student{sex:"M"}) WHERE sl.age = min 
+RETURN sl.name as Name, sl.age as Age
+
+Then return the name (as Name) and age (as Age) of the youngest Male(s) as well as
+the average age of Males (as AverageAge) and the difference in age between the
+youngest Male(s) and the average age (as Difference).
+E.g., If the average age of Males was 30, and the youngest Male was called “Tony”
+aged 20, the following should be returned:
+Name    Age     AverageAge  Difference
+Tony    20      30          10
+
+MATCH(sl:Lecturer|Student{sex:"M"}) WITH min(sl.age) AS min 
+MATCH(sl:Lecturer|Student{sex:"M"}) WHERE sl.age = min 
+MATCH(sl2:Lecturer|Student{sex:"M"})
+RETURN sl.name as Name, sl.age as Age, avg(sl2.age) as AverageAge, avg(sl2.age) - sl.age as Difference
