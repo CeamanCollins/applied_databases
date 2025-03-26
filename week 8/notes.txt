@@ -1,0 +1,80 @@
+CREATE(p1:Person{name:"Tom"})-[r:FRIENDS_WITH]->(p2:Person{name:"John"})
+RETURN p1, r, p2
+
+MATCH(p1:Person{name:"John"}),(p2:Person{name:"Tom"})
+CREATE(p1)-[r:FRIENDS_WITH]->(p2)
+RETURN p1, r, p2
+
+MATCH(p1:Person{name:"John"}),(p2:Person{name:"Tom"})
+MERGE(p1)-[r:FRIENDS_WITH]->(p2)
+RETURN p1,r,p2
+
+MATCH(p1:Person{name:"Tom"}),(p2:Person{name:"John"})
+MERGE(p1)-[r:FOLLOWS{since:"2022-03-01"}]->(p2)
+RETURN p1, r, p2
+
+MATCH(p:Person)-[:STUDIES]->()-[]->({name:"ATU"}) RETURN p.name
+
+MATCH(p:Person)-[:STUDIES]->(c:Course)-[d:DELIVERED_AT]->(col:College{name:"ATU"}) RETURN p.name
+
+MATCH(col:College{name:"ATU"})
+<-[:DELIVERED_AT]-
+()
+<-[:STUDIES]-
+(p:Person)
+RETURN count(p)
+
+MATCH(:Person{name:"Anne"})
+-[:STUDIES]->
+()
+-[:DELIVERED_AT]->
+(c:College)
+RETURN distinct c.college
+
+MATCH(n:Person)
+-[:STUDIES]->
+(c:Course)
+RETURN n.name as Name,
+size(collect(c.name)) as Courses
+
+MATCH(g{name:"George"})
+-[:CHILD_OF]->
+()
+-[:CHILD_OF]->
+(gp)
+RETURN gp.name
+
+MATCH(g{name:"George"})
+-[:CHILD_OF*2]->
+(gp)
+RETURN gp.name
+
+MATCH(g{name:"George"})
+-[:CHILD_OF]->
+()
+-[:CHILD_OF]->
+()
+-[:CHILD_OF]->
+(ggp)
+RETURN ggp.name
+
+MATCH(g{name:"George"})
+-[:CHILD_OF*3]->
+(ggp)
+RETURN ggp.name
+
+MATCH(g{name:"George VI"})
+<-[:CHILD_OF*2..3]-
+(gc)
+RETURN gc.name
+
+MATCH(g{name:"George"})
+-[:CHILD_OF*]->
+(a)
+RETURN a.name
+
+[*2] *exactly 2
+[*2..3] *min 2 max 3
+[*2..] *min 2 no max
+[*..2] *no min max 2
+[*] *no min no max

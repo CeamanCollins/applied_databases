@@ -1,0 +1,98 @@
+• Show the PERSONs who live in Galway TOWN.
+
+MATCH(p:PERSON)-[:LIVES_IN]->({name:"Galway"})
+RETURN p
+
+• Show the age of the oldest PERSONs who lives in Carrick-on-Shannon.
+
+MATCH(p:PERSON)-[:LIVES_IN]->({name:"Carrick-on-Shannon"})
+WITH max(p.age) as oldest
+MATCH(p:PERSON)-[:LIVES_IN]->({name:"Carrick-on-Shannon"})
+WHERE p.age = oldest
+RETURN p
+
+• Show the average age of males who live in Roscommon COUNTY.
+
+MATCH(p:PERSON{sex:"M"})-[:LIVES_IN]->()-[:PART_OF]->({name:"Roscommon"})
+RETURN avg(p.age)
+
+• Show the number of males who live in Galway COUNTY.
+
+MATCH(p:PERSON{sex:"M"})-[:LIVES_IN]->()-[:PART_OF]->({name:"Galway"})
+RETURN COUNT(p)
+
+• Show the name and population of the COUNTY where Lucy lives.
+
+MATCH(:PERSON{name:"Lucy"})-[:LIVES_IN]->()-[:PART_OF]->(C)
+MATCH(C)<-[:PART_OF]-()<-[:LIVES_IN]-(P)
+RETURN C.name, Count(P)
+
+• Show the COUNTY name , TOWN name and PERSON name where the person has lived
+in the town since the year 2010.
+
+MATCH((C)<-[:PART_OF]-(T)<-[:LIVES_IN{since:2010}]-(P))
+RETURN C.name, T.name, P.name
+
+• Show the COUNTY name and the TOWN name of all towns with a population of less
+than 5000.
+
+MATCH(C)<-[:PART_OF]-(T:TOWN)
+WHERE T.pop < 5000
+RETURN C.name, T.name
+
+• For people living in towns since 2011 or later, show the person’s name (as Name), how
+long they’ve been living in the town (as Since), and the name of the town (as Town), in
+chronological order.
+
+MATCH(p:PERSON)-[r:LIVES_IN]->(t:TOWN)
+WHERE r.since > 2011
+RETURN p.name as Name, r.since as Since, t.name as Town ORDER BY r.since
+
+• Show the total population of the towns in county Galway (as County_Galway_Pop),
+
+MATCH(t:TOWN)-[:PART_OF]->(:COUNTY{name:"Galway"})
+RETURN SUM(t.pop) AS County_Galway_Pop
+
+• Show the county name (as County), the towns in the county (as Towns) and the number
+of towns in the county (as Num_Towns).
+
+MATCH(C:COUNTY)<-[:PART_OF]-(T:TOWN)
+RETURN C.name as County, COLLECT(T.name) as Towns, SIZE(COLLECT(T.name))
+
+• Show the names of Bill’s hobbies.
+
+MATCH(:Person{name:"Bill"})-[:LIKES]->(h:Hobby)
+RETURN h.name
+
+• Show the names of hobbies people who live in Galway like (as Galway_Hobbies) in
+alphabetical order.
+
+MATCH(:County{name:"Galway"})<-[:LIVES_IN]-(:Person)-[:LIKES]->(h:Hobby)
+RETURN h.name as Galway_Hobbies ORDER BY h.name
+
+• Show all friends-of-friends of Tom.
+A friend-of-a-friend (FOAF) is someone whom your friend is friends with, but not you.
+In the example below, Bill and Bob are FOAFs of Tom.
+Ann is a friend of Tom, and her friend is Sarah. So, Sarah would be a FOAF of Tom, but
+as Tom is already friends with her, she’s not FOAF of Tom. Similarly, for Ann and Sean.
+
+MATCH(:Person{name:"Tom"})-[:FRIENDS_WITH]-()-[:FRIENDS_WITH]-(FOAF)
+WHERE NOT EXISTS((:Person{name:"Tom"})-[:FRIENDS_WITH]-(FOAF))
+RETURN DISTINCT FOAF
+
+• Show the unique hobbies that people who live in Westmeath like (as
+Westmeath_Hobbies).
+
+MATCH(h:Hobby)<-[:LIKES]-()-[:LIVES_IN]->({name:"Westmeath"})
+RETURN DISTINCT h.name as Westmeath_Hobbies
+
+• Show the number of people who like relaxation hobbies (as Relaxation).
+
+MATCH(:Hobby{type:"relaxation"})<-[:LIKES]-(p:Person)
+RETURN COUNT(p.name) as Relaxation
+
+• Show a heading called Likes_Basketball that returns true if Sarah LIKES basketball, or
+false if Sarah doesn’t like basketball.
+
+MATCH(p{name:"Sarah"})
+RETURN exists((p)-[:LIKES]->({name:"Basketball"})) as Likes_Basketball

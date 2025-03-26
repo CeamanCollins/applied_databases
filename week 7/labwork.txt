@@ -1,27 +1,27 @@
 • Find the average age of Students, rounded to the nearest whole number.
 
-MATCH(s:Student) return avg(s.age) as Avg_Age
+MATCH(s:Student) RETURN round(avg(s.age)) as Avg_Age
 
 • Show the name of each student and his/her age.
 
-MATCH(s:Student) return s.name,  s.age
+MATCH(s:Student) RETURN s.name, s.age
 
 • Find the age of the youngest Student.
 
-MATCH(s:Student) return min(s.age)
+MATCH(s:Student) RETURN min(s.age)
 
 • Show the names of students who have a twitter attribute.
 
-MATCH(s:Student) WHERE s.twitter IS NOT NULL return s.name
+MATCH(s:Student) WHERE s.twitter IS NOT NULL RETURN s.name
 
 • Show the number of students who have a twitter attribute.
 
-MATCH(s:Student) WHERE s.twitter IS NOT NULL return count(s.name)
+MATCH(s:Student) WHERE s.twitter IS NOT NULL RETURN count(s.name)
 
 • Show the average of age of people in their 20s, 30s and 40s rounded to one decimal
 place.
 
-MATCH(s:Student) WHERE s.age > 19 AND s.age < 50 RETURN round(avg(s.age),1)
+MATCH(s:Student|Lecturer) WHERE s.age > 19 AND s.age < 50 RETURN round(avg(s.age),1)
 
 • Show all the properties for the Student Tom.
 
@@ -29,15 +29,15 @@ MATCH(s:Student{name:"Tom"}) RETURN keys(s)
 
 • Increase everyone’s age by 1.
 
-MATCH(s:Student) SET s.age = s.age + 1
+MATCH(s) SET s.age = s.age + 1
 
-• Return the name and age of all males living in Galway
+• RETURN the name and age of all males living in Galway
 
-MATCH(s:Student{address:"Galway"}) return s.name, s.age
+MATCH(s:Student|Lecturer{address:"Galway",sex:"M"}) RETURN s.name, s.age
 
 • Create the following nodes with both :Student and :Lecturer labels 
 
-create(:Student:Lecturer{name:"Walter", age:44, email:"walter@gmit.ie", hair:"black"})
+create(:Student:Lecturer{name:"Walter", age:44, sex:"M" email:"walter@gmit.ie", hair:"black"})
 
 • Show the name, age and hair colour of everyone who is both a Student and a
 Lecturer.
@@ -51,19 +51,63 @@ MATCH(l:Lecturer) SET l.twitter = l.twitter + "GMIT"
 
 • Find the average age of Males and find the youngest Male(s).
 
-MATCH(sl:Lecturer|Student{sex:"M"}) WITH min(sl.age) AS min 
-MATCH(sl:Lecturer|Student{sex:"M"}) WHERE sl.age = min 
-RETURN sl.name as Name, sl.age as Age
 
-Then return the name (as Name) and age (as Age) of the youngest Male(s) as well as
+MATCH(sl{sex:"M"}) WITH min(sl.age) AS min 
+MATCH(sl{sex:"M"}) WHERE sl.age = min 
+RETURN sl.name as Name, sl.age as Age, avg(sl.age) as AverageAge
+
+Then RETURN the name (as Name) and age (as Age) of the youngest Male(s) as well as
 the average age of Males (as AverageAge) and the difference in age between the
 youngest Male(s) and the average age (as Difference).
 E.g., If the average age of Males was 30, and the youngest Male was called “Tony”
-aged 20, the following should be returned:
+aged 20, the following should be RETURNed:
 Name    Age     AverageAge  Difference
 Tony    20      30          10
 
-MATCH(sl:Lecturer|Student{sex:"M"}) WITH min(sl.age) AS min 
-MATCH(sl:Lecturer|Student{sex:"M"}) WHERE sl.age = min 
-MATCH(sl2:Lecturer|Student{sex:"M"})
-RETURN sl.name as Name, sl.age as Age, avg(sl2.age) as AverageAge, avg(sl2.age) - sl.age as Difference
+MATCH(sl{sex:"M"}) WITH min(sl.age) AS min 
+MATCH(sl1{sex:"M"}) WHERE sl1.age = min 
+MATCH(sl2{sex:"M"})
+RETURN sl1.name as Name, sl1.age as Age, avg(sl2.age) as AverageAge, avg(sl2.age) - sl1.age as Difference
+
+MATCH(n{sex:"M"}) WITH avg(n.age) as avgAge 
+MATCH(n1{sex:"M"}) WITH min(n1.age) as minAge, avgAge
+MATCH(n2{sex:"M"}) WHERE n2.age = minAge
+RETURN n2.name as Name, n2.age as Age, avgAge as AverageAge, avgAge - n2.age as Difference
+
+• Show each movie node for movies that were released between 2000 and 2010
+
+MATCH(n) WHERE n.released > 1999 and n.released < 2011 RETURN n
+
+• Set an attribute called olderThan70 to true for all Persons born in the 1930s.
+
+MATCH(n) WHERE n.born >= 1930 and n.born < 1940 SET n.olderThan70 = True
+
+• Show the movie title and the year it was released for the first 10 movies in
+alphabetical order.
+
+MATCH(n:Movie) RETURN n.title, n.released ORDER BY n.title limit 10
+
+• Show the unique years in which movies were released in chronological order.
+
+MATCH(n:Movie) RETURN DISTINCT n.released ORDER BY n.released
+
+• Show the title and tagline for movies released in 1999.
+
+match(n:Movie{released:1999}) RETURN n.title, n.tagline
+
+• Show the names of the people (as People) and the year they were born (as YOB)
+for everyone older than “Robin Williams”.
+
+MATCH(n:Person{name:"Robin Williams"}) WITH n.born AS RW
+MATCH(n1:Person) WHERE n1.born < RW
+RETURN n1.name as People, n1.born as YOB
+
+• Show the number of movies released in 2006 (as Releases_in_2006).
+
+MATCH(n:Movie{released:2006}) RETURN count(n.title) as Releases_in_2006
+
+• Show the name (as Name) and born (as YOB) the youngest Person(s).
+
+MATCH(n:Person) WITH max(n.born) as maxBorn
+MATCH(n1:Person) WHERE n1.born = maxBorn
+RETURN n1.name as Name, n1.born as YOB

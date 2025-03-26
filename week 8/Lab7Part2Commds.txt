@@ -1,0 +1,134 @@
+MATCH(n) DETACH DELETE n;
+
+CREATE(p:Person{name:"Bill", age:23});
+CREATE(p:Person{name:"Ann", age:27});
+CREATE(p:Person{name:"Tom", age:19});
+CREATE(p:Person{name:"Sarah", age:23});
+CREATE(p:Person{name:"Bob", age:32});
+CREATE(p:Person{name:"Sean", age:25});
+
+
+CREATE(h:Hobby{name:"Cycling", type:"exercise"});
+CREATE(h:Hobby{name:"Soccer", type:"exercise"});
+CREATE(h:Hobby{name:"Camogie", type:"exercise"});
+CREATE(h:Hobby{name:"Reading", type:"relaxation"});
+CREATE(h:Hobby{name:"Basketball", type:"exercise"});
+CREATE(h:Hobby{name:"Movies", type:"relaxation"});
+
+
+CREATE(c:County{name:"Westmeath", abbreviation:"WH"});
+CREATE(c:County{name:"Galway", abbreviation:"G"});
+CREATE(c:County{name:"Mayo", abbreviation:"MO"});
+
+
+MATCH(p:Person{name:"Bill"})
+MATCH(h:Hobby{name:"Cycling"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Bill"})
+MATCH(h:Hobby{name:"Soccer"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Bill"})
+MATCH(p1:Person{name:"Ann"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Bill"})
+MATCH(p1:Person{name:"Bob"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Bill"})
+MATCH(c:County{name:"Westmeath"})
+CREATE(p)-[:LIVES_IN]->(c);
+
+MATCH(p:Person{name:"Ann"})
+MATCH(h:Hobby{name:"Camogie"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Ann"})
+MATCH(h:Hobby{name:"Reading"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Ann"})
+MATCH(p1:Person{name:"Tom"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Ann"})
+MATCH(p1:Person{name:"Sarah"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Ann"})
+MATCH(c:County{name:"Galway"})
+CREATE(p)-[:LIVES_IN]->(c);
+
+MATCH(p:Person{name:"Tom"})
+MATCH(h:Hobby{name:"Cycling"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Tom"})
+MATCH(h:Hobby{name:"Basketball"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Tom"})
+MATCH(p1:Person{name:"Sarah"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Tom"})
+MATCH(p1:Person{name:"Sean"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Tom"})
+MATCH(c:County{name:"Westmeath"})
+CREATE(p)-[:LIVES_IN]->(c);
+
+MATCH(p:Person{name:"Sarah"})
+MATCH(h:Hobby{name:"Basketball"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Sarah"})
+MATCH(h:Hobby{name:"Movies"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Sarah"})
+MATCH(p1:Person{name:"Sean"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Sarah"})
+MATCH(c:County{name:"Galway"})
+CREATE(p)-[:LIVES_IN]->(c);
+
+MATCH(p:Person{name:"Bob"})
+MATCH(h:Hobby{name:"Soccer"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Bob"})
+MATCH(h:Hobby{name:"Reading"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Bob"})
+MATCH(h:Hobby{name:"Basketball"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Bob"})
+MATCH(p1:Person{name:"Sean"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Bob"})
+MATCH(p1:Person{name:"Sarah"})
+CREATE(p)-[:FRIENDS_WITH]->(p1);
+
+MATCH(p:Person{name:"Bob"})
+MATCH(c:County{name:"Westmeath"})
+CREATE(p)-[:LIVES_IN]->(c);
+
+MATCH(p:Person{name:"Sean"})
+MATCH(h:Hobby{name:"Reading"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Sean"})
+MATCH(h:Hobby{name:"Movies"})
+CREATE(p)-[:LIKES]->(h);
+
+MATCH(p:Person{name:"Sean"})
+MATCH(c:County{name:"Mayo"})
+CREATE(p)-[:LIVES_IN]->(c);
