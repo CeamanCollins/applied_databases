@@ -1,3 +1,7 @@
+MATCH(t:TOWN{name:"Galway"})
+MATCH(c:COUNTY{name:"Galway"})
+CREATE(t)-[:PART_OF{countyTown:true}]->(c)
+
 • Show the PERSONs who live in Galway TOWN.
 
 MATCH(p:PERSON)-[:LIVES_IN]->({name:"Galway"})
@@ -9,7 +13,7 @@ MATCH(p:PERSON)-[:LIVES_IN]->({name:"Carrick-on-Shannon"})
 WITH max(p.age) as oldest
 MATCH(p:PERSON)-[:LIVES_IN]->({name:"Carrick-on-Shannon"})
 WHERE p.age = oldest
-RETURN p
+RETURN p.name, p.age
 
 • Show the average age of males who live in Roscommon COUNTY.
 
@@ -25,7 +29,10 @@ RETURN COUNT(p)
 
 MATCH(:PERSON{name:"Lucy"})-[:LIVES_IN]->()-[:PART_OF]->(C)
 MATCH(C)<-[:PART_OF]-()<-[:LIVES_IN]-(P)
-RETURN C.name, Count(P)
+RETURN C.name, C.
+
+MATCH(:PERSON{name:"Lucy"})-[*2]-(c:COUNTY)
+RETURN c.name, c.pop
 
 • Show the COUNTY name , TOWN name and PERSON name where the person has lived
 in the town since the year 2010.
@@ -45,8 +52,9 @@ long they’ve been living in the town (as Since), and the name of the town (as 
 chronological order.
 
 MATCH(p:PERSON)-[r:LIVES_IN]->(t:TOWN)
-WHERE r.since > 2011
-RETURN p.name as Name, r.since as Since, t.name as Town ORDER BY r.since
+WHERE r.since > 2010
+RETURN p.name as Name, r.since as Since, t.name as Town 
+ORDER BY r.since
 
 • Show the total population of the towns in county Galway (as County_Galway_Pop),
 
@@ -57,7 +65,9 @@ RETURN SUM(t.pop) AS County_Galway_Pop
 of towns in the county (as Num_Towns).
 
 MATCH(C:COUNTY)<-[:PART_OF]-(T:TOWN)
-RETURN C.name as County, COLLECT(T.name) as Towns, SIZE(COLLECT(T.name))
+RETURN C.name as County, COLLECT(T.name) as Towns, SIZE(COLLECT(T.name)) as Num_Towns
+
+RETURN C.name as County, COLLECT(T.name) as Towns, COUNT(t) as Num_Towns
 
 • Show the names of Bill’s hobbies.
 
@@ -68,7 +78,8 @@ RETURN h.name
 alphabetical order.
 
 MATCH(:County{name:"Galway"})<-[:LIVES_IN]-(:Person)-[:LIKES]->(h:Hobby)
-RETURN h.name as Galway_Hobbies ORDER BY h.name
+RETURN h.name as Galway_Hobbies ORDER BY h.name as Galway_Hobbies
+ORDER BY Galway_Hobbies
 
 • Show all friends-of-friends of Tom.
 A friend-of-a-friend (FOAF) is someone whom your friend is friends with, but not you.
@@ -78,7 +89,9 @@ as Tom is already friends with her, she’s not FOAF of Tom. Similarly, for Ann 
 
 MATCH(:Person{name:"Tom"})-[:FRIENDS_WITH]-()-[:FRIENDS_WITH]-(FOAF)
 WHERE NOT EXISTS((:Person{name:"Tom"})-[:FRIENDS_WITH]-(FOAF))
-RETURN DISTINCT FOAF
+RETURN DISTINCT FOAF.name
+
+MATCH(:Person{name:"Tom"})-[:FRIENDS_WITH*2]-(FOAF)
 
 • Show the unique hobbies that people who live in Westmeath like (as
 Westmeath_Hobbies).
@@ -89,7 +102,8 @@ RETURN DISTINCT h.name as Westmeath_Hobbies
 • Show the number of people who like relaxation hobbies (as Relaxation).
 
 MATCH(:Hobby{type:"relaxation"})<-[:LIKES]-(p:Person)
-RETURN COUNT(p.name) as Relaxation
+WITH DISTINCT p.name as names
+RETURN COUNT(names)
 
 • Show a heading called Likes_Basketball that returns true if Sarah LIKES basketball, or
 false if Sarah doesn’t like basketball.
