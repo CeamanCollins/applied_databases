@@ -1,0 +1,6 @@
+SELECT DISTINCT s.StudioName as Studio 
+FROM studio s 
+INNER JOIN film f ON s.StudioID = f.FilmStudioID 
+INNER JOIN filmcast fc ON fc.CastFilmID = f.FilmID 
+INNER JOIN actor a ON a.ActorID = fc.CastActorID
+WHERE a.ActorName = "Tom Cruise";

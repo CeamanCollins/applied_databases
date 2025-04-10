@@ -1,0 +1,4 @@
+MATCH(:Institution{name:"Atlantic Technological University"})<-[:PART_OF]-(L:Location)<-[:PROVIDED_BY]-(C:Course)
+WHERE NOT EXISTS((C)<-[:STUDIES]-())
+RETURN L.location as Location, COUNT(C) as Empty_Courses
+ORDER BY Empty_Courses DESC, Location

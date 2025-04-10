@@ -1,0 +1,2 @@
+MATCH(:Location{location:"Sligo"})<-[:PROVIDED_BY]-()-[:STUDIES]-(S:Student)
+RETURN ROUND(AVG(S.gpa),1) as Avg_Sligo_GPA

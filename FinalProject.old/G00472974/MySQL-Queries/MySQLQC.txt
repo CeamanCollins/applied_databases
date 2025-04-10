@@ -1,0 +1,7 @@
+SELECT a.ActorName AS Actor, g.GenreName as Genre, f.FilmName as Film 
+FROM actor a
+INNER JOIN filmcast fc ON a.ActorID = fc.CastActorID
+INNER JOIN film f ON  f.FilmID = fc.CastFilmID
+INNER JOIN genre g ON g.GenreID = f.FilmGenreID
+WHERE year(a.ActorDOB) >= 1960 and year(a.ActorDOB) <= 1965
+ORDER BY Actor, Genre, Film;
