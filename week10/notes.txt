@@ -1,0 +1,51 @@
+conn = pymysql.connect(host=, user=, password=, db=, port=, cursorclass=pymysql.cursors.DictCursor)
+
+query = "SELECT * FROM subject"
+
+with conn:
+    cursor = conn.cursor()
+    cursor.execute(query)
+    subjects = cursor.fetchall()
+    for s in subjects:
+        print(s['name'])
+
+query = "SELECT * FROM subject WHERE teacher LIKE %s"
+
+with conn:
+    cursor = conn.cursor()
+    cursor.execute(query, ("Ms.%"))
+    subjects = cursor.fetchall()
+    for s in subjects:
+        print(s["name"])
+
+ins = "INSERT INTO subject (Name, Teacher, OnLeavingCert) VALUES (%s, %s, %s)"
+
+with conn:
+    try:
+        cursor = conn.cursor()
+        cursor.execute(ins, "Maths", "Ms. Jones", 1)
+        conn.commit()
+        print("Insert Successful")
+    except pymysql.err.InternalError as e:
+        print("InternalError", e)
+    except pymysql.err.IntegrityError:
+        print("Maths already exists")
+    except Exception as e:
+        print("error", e)
+
+query = "DELETE FROM subject WHERE NAME = %s"
+
+name = "Maths"
+
+with conn:
+    try:
+        cursor = conn.cursor()
+        rowsAffected = cursor.execute(query, (name))
+        conn.commit()
+        if (rowsAffected == 0):
+            print("Nothing deleted - ", name, " never existed)
+        else:
+            print(rowsAffected, " row(s) deleted")
+    except Exception as e:
+        print("error ", e)
+        

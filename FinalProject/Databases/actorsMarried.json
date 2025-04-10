@@ -1,0 +1,8 @@
+MATCH(n) DETACH DELETE(n);
+
+CREATE(:Actor{ActorID:1})-[:MARRIED_TO]->(:Actor{ActorID:81});
+MATCH(b:Actor{ActorID:81})
+CREATE(:Actor{ActorID:9})-[:DIVORCED_FROM]->(b);
+CREATE(:Actor{ActorID:3})-[:MARRIED_TO]->(:Actor{ActorID:4});
+CREATE(:Actor{ActorID:17})-[:MARRIED_TO]->(:Actor{ActorID:182});
+CREATE(:Actor{ActorID:75})-[:MARRIED_TO]->(:Actor{ActorID:53});

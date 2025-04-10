@@ -1,0 +1,532 @@
+MATCH(n) DETACH DELETE n;
+
+CREATE(thirdLevel:University{name:"Third Level"});
+
+// **********************************
+// ATU
+// **********************************
+CREATE(:Institution{name:"Atlantic Technological University", students:26400});
+
+// ----------------------------------
+// ATU is a Technological University
+// ----------------------------------
+MATCH(i:Institution{name:"Atlantic Technological University"})
+MATCH(u:University)
+CREATE(i)-[:MEMBER_OF]->(u);
+
+// ----------------------------------
+// ATU Locations
+// ----------------------------------
+CREATE(:Location{location:"Galway", students:12000});
+CREATE(:Location{location:"Sligo", students:6500});
+CREATE(:Location{location:"Letterkenny", students:3000});
+
+MATCH(l:Location{location:"Galway"})
+MATCH(i:Institution{name:"Atlantic Technological University"})
+CREATE(l)-[:PART_OF]->(i);
+
+MATCH(l:Location{location:"Sligo"})
+MATCH(i:Institution{name:"Atlantic Technological University"})
+CREATE(l)-[:PART_OF]->(i);
+
+MATCH(l:Location{location:"Letterkenny"})
+MATCH(i:Institution{name:"Atlantic Technological University"})
+CREATE(l)-[:PART_OF]->(i);
+
+// ----------------------------------
+// ATU Galway Courses
+// ----------------------------------
+CREATE(:Course{name:"B.Sc. in Computer Science", cao:"atugCS", duration:3, points:300});
+CREATE(:Course{name:"B.Eng. in Mechanical Engineering", cao:"atugME", duration:3, points:305});
+CREATE(:Course{name:"B.Eng. (Hons) in Mechanical Engineering", cao:"atugMEH", duration:4, points:245});
+CREATE(:Course{name:"B.Sc. in Physics", cao:"atugP", duration:3, points:290});
+CREATE(:Course{name:"B.Comm. in Business", cao:"atugB", duration:3, points:235});
+CREATE(:Course{name:"B.Comm. (Hons) in Business", cao:"atugBH", duration:3, points:240});
+CREATE(:Course{name:"B.A. in Hotel Management", cao:"atugM", duration:3, points:290});
+
+MATCH(c:Course) WHERE c.cao CONTAINS "atug"
+MATCH(l:Location{location:"Galway"})
+CREATE(c)-[:PROVIDED_BY]->(l);
+
+// ----------------------------------
+// ATU Galway Students
+// ----------------------------------
+CREATE(:Student{sid:"ATU-G003", name:"Sean Collins", gpa:3.3});
+MATCH(s:Student{sid:"ATU-G003"})
+MATCH(c:Course{cao:"atugCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G004", name:"Ann Mulligan", gpa:3.4});
+MATCH(s:Student{sid:"ATU-G004"})
+MATCH(c:Course{cao:"atugCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G006", name:"Bob Murphy", gpa:2.7});
+MATCH(s:Student{sid:"ATU-G006"})
+MATCH(c:Course{cao:"atugCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G007", name:"Thomas Smyth", gpa:3.7});
+MATCH(s:Student{sid:"ATU-G007"})
+MATCH(c:Course{cao:"atugCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G008", name:"Veronica Fallon", gpa:2.5});
+MATCH(s:Student{sid:"ATU-G008"})
+MATCH(c:Course{cao:"atugCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G009", name:"Barry Fallon", gpa:2.6});
+MATCH(s:Student{sid:"ATU-G009"})
+MATCH(c:Course{cao:"atugME"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G011", name:"Alan Williams", gpa:3.4});
+MATCH(s:Student{sid:"ATU-G011"})
+MATCH(c:Course{cao:"atugME"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G013", name:"Fiona O'Hehir", gpa:3.0});
+MATCH(s:Student{sid:"ATU-G013"})
+MATCH(c:Course{cao:"atugB"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G014", name:"Shane Collins", gpa:2.0});
+MATCH(s:Student{sid:"ATU-G014"})
+MATCH(c:Course{cao:"atugB"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G015", name:"Fiona Doyle", gpa:3.6});
+MATCH(s:Student{sid:"ATU-G015"})
+MATCH(c:Course{cao:"atugB"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G016", name:"Bernie Walsh", gpa:2.3});
+MATCH(s:Student{sid:"ATU-G016"})
+MATCH(c:Course{cao:"atugB"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G019", name:"Finbar Kelly", gpa:2.5});
+MATCH(s:Student{sid:"ATU-G019"})
+MATCH(c:Course{cao:"atugB"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G020", name:"Billy Kelly", gpa:3.5});
+MATCH(s:Student{sid:"ATU-G020"})
+MATCH(c:Course{cao:"atugB"})
+CREATE(s)-[:STUDIES]->(c);
+
+
+CREATE(:Student{sid:"ATU-G021", name:"Paul Byrne", gpa:3.8});
+MATCH(s:Student{sid:"ATU-G021"})
+MATCH(c:Course{cao:"atugP"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-G022", name:"Alison Connors", gpa:3.3});
+MATCH(s:Student{sid:"ATU-G022"})
+MATCH(c:Course{cao:"atugP"})
+CREATE(s)-[:STUDIES]->(c)
+
+
+
+// ----------------------------------
+// ATU Sligo Courses
+// ----------------------------------
+CREATE(:Course{name:"B.Sc. (Hons) in Physics", cao:"atusPH", duration:4, points:310});
+CREATE(:Course{name:"B.A. in Hotel Management", cao:"atusHM", duration:3, points:300});
+CREATE(:Course{name:"B.Eng (Hons) in Industrial Engineering", cao:"atusIEH", duration:4, points:290});
+CREATE(:Course{name:"B.A (Hons) in Accounting", cao:"atusAccH", duration:4, points:275});
+
+MATCH(c:Course) WHERE c.cao CONTAINS "atus"
+MATCH(l:Location{location:"Sligo"})
+CREATE(c)-[:PROVIDED_BY]->(l);
+
+
+// ----------------------------------
+// ATU Sligo Students
+// ----------------------------------
+CREATE(:Student{sid:"ATU-S003", name:"Alison Boyle", gpa:3.1});
+MATCH(s:Student{sid:"ATU-S003"})
+MATCH(c:Course{cao:"atusPH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-S004", name:"Will O'Sullivan", gpa:3.0});
+MATCH(s:Student{sid:"ATU-S004"})
+MATCH(c:Course{cao:"atusPH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-S005", name:"Ryan O'Farrell", gpa:2.1});
+MATCH(s:Student{sid:"ATU-S005"})
+MATCH(c:Course{cao:"atusPH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-S007", name:"Pascal Connors", gpa:2.4});
+MATCH(s:Student{sid:"ATU-S007"})
+MATCH(c:Course{cao:"atusIEH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-S009", name:"Sam Kelly", gpa:3.8});
+MATCH(s:Student{sid:"ATU-S009"})
+MATCH(c:Course{cao:"atusAccH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-S011", name:"Jack Gallagher", gpa:2.8});
+MATCH(s:Student{sid:"ATU-S011"})
+MATCH(c:Course{cao:"atusAccH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-S012", name:"Betty Smith", gpa:3.5});
+MATCH(s:Student{sid:"ATU-S012"})
+MATCH(c:Course{cao:"atusAccH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-S015", name:"Albert Doherty", gpa:2.1});
+MATCH(s:Student{sid:"ATU-S015"})
+MATCH(c:Course{cao:"atusAccH"})
+CREATE(s)-[:STUDIES]->(c);
+
+
+// ----------------------------------
+// ATU Letterkenny Courses
+// ----------------------------------
+CREATE(:Course{name:"B.Sc. (Hons) in Physics", cao:"atulPH", duration:4, points:280});
+CREATE(:Course{name:"B.A. in Project Management", cao:"atulPM", duration:3, points:220});
+CREATE(:Course{name:"B.Eng (Hons) in Civil Engineering", cao:"atulCEH", duration:4, points:305});
+CREATE(:Course{name:"B.A. in Hotel Management", cao:"atulHM", duration:3, points:265});
+CREATE(:Course{name:"B.A in Accounting", cao:"atulAcc", duration:3, points:290});
+CREATE(:Course{name:"B.A (Hons) in Accounting", cao:"atulAccH", duration:4, points:230});
+
+MATCH(c:Course) WHERE c.cao CONTAINS "atul"
+MATCH(l:Location{location:"Letterkenny"})
+CREATE(c)-[:PROVIDED_BY]->(l);
+
+// ----------------------------------
+// ATU Letterkenny Students
+// ----------------------------------
+CREATE(:Student{sid:"ATU-L001", name:"John Kennedy", gpa:3.1});
+MATCH(s:Student{sid:"ATU-L001"})
+MATCH(c:Course{cao:"atulPH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-L003", name:"Sarah Lynch", gpa:3.2});
+MATCH(s:Student{sid:"ATU-L003"})
+MATCH(c:Course{cao:"atulPH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-L004", name:"Fiona Osmond", gpa:2.2});
+MATCH(s:Student{sid:"ATU-L004"})
+MATCH(c:Course{cao:"atulPH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-L005", name:"Oisin O'Connor", gpa:2.6});
+MATCH(s:Student{sid:"ATU-L005"})
+MATCH(c:Course{cao:"atulHM"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-L006", name:"Hannah Murphy", gpa:3.6});
+MATCH(s:Student{sid:"ATU-L006"})
+MATCH(c:Course{cao:"atulHM"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-L007", name:"Brian McBrien", gpa:3.4});
+MATCH(s:Student{sid:"ATU-L007"})
+MATCH(c:Course{cao:"atulHM"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"ATU-L008", name:"Tommy Dowd", gpa:2.4});
+MATCH(s:Student{sid:"ATU-L008"})
+MATCH(c:Course{cao:"atulAccH"})
+CREATE(s)-[:STUDIES]->(c);
+
+// *******************************
+// TUS
+// *******************************
+CREATE(:Institution{name:"Technological University of the Shannon", students:16500});
+
+// ----------------------------------
+// TUS is a Technological University
+// ----------------------------------
+MATCH(i:Institution{name:"Technological University of the Shannon"})
+MATCH(u:University)
+CREATE(i)-[:MEMBER_OF]->(u);
+
+// ----------------------------------
+// TUS Locations
+// ----------------------------------
+CREATE(:Location{location:"Athlone", students:6000});
+CREATE(:Location{location:"Limerick", students:8000});
+
+MATCH(l:Location{location:"Athlone"})
+MATCH(i:Institution{name:"Technological University of the Shannon"})
+CREATE(l)-[:PART_OF]->(i);
+
+MATCH(l:Location{location:"Limerick"})
+MATCH(i:Institution{name:"Technological University of the Shannon"})
+CREATE(l)-[:PART_OF]->(i);
+
+
+// ----------------------------------
+// TUS Athlone Courses
+// ----------------------------------
+CREATE(:Course{name:"B.Sc. in Computer Science", cao:"tusaCS", duration:3, points:300});
+CREATE(:Course{name:"B.A. in Social Studies", cao:"tusaSS", duration:3, points:250});
+CREATE(:Course{name:"B.A. (Hons) in Social Studies", cao:"tusaSSH", duration:4, points:260});
+CREATE(:Course{name:"B.Eng. (Hons) in Electronic Engineering", cao:"tusaEEH", duration:4, points:310});
+
+MATCH(c:Course) WHERE c.cao CONTAINS "tusa"
+MATCH(l:Location{location:"Athlone"})
+CREATE(c)-[:PROVIDED_BY]->(l);
+
+
+// ----------------------------------
+// ATU Athlone Students
+// ----------------------------------
+CREATE(:Student{sid:"TUS-A003", name:"Seamus Quinn", gpa:3.7});
+MATCH(s:Student{sid:"TUS-A003"})
+MATCH(c:Course{cao:"tusaCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A004", name:"Ronan Murphy", gpa:3.2});
+MATCH(s:Student{sid:"TUS-A004"})
+MATCH(c:Course{cao:"tusaCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A006", name:"Annie Duignan", gpa:2.5});
+MATCH(s:Student{sid:"TUS-A006"})
+MATCH(c:Course{cao:"tusaCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A007", name:"Mary O'Moore", gpa:3.3});
+MATCH(s:Student{sid:"TUS-A007"})
+MATCH(c:Course{cao:"tusaCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A008", name:"Carmel Dennison", gpa:2.3});
+MATCH(s:Student{sid:"TUS-A008"})
+MATCH(c:Course{cao:"tusaCS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A009", name:"Bryan Kelly", gpa:2.4});
+MATCH(s:Student{sid:"TUS-A009"})
+MATCH(c:Course{cao:"tusaSS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A011", name:"Laura Collins", gpa:3.4});
+MATCH(s:Student{sid:"TUS-A011"})
+MATCH(c:Course{cao:"tusaSS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A012", name:"Liam Higgins", gpa:2.9});
+MATCH(s:Student{sid:"TUS-A012"})
+MATCH(c:Course{cao:"tusaSS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A013", name:"Barry McTiernan", gpa:3.2});
+MATCH(s:Student{sid:"TUS-A013"})
+MATCH(c:Course{cao:"tusaSS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A015", name:"Carol Connolly", gpa:3.3});
+MATCH(s:Student{sid:"TUS-A015"})
+MATCH(c:Course{cao:"tusaSS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-A016", name:"Bob Collins", gpa:2.3});
+MATCH(s:Student{sid:"TUS-A016"})
+MATCH(c:Course{cao:"tusaSS"})
+CREATE(s)-[:STUDIES]->(c);
+
+
+// ----------------------------------
+// TUS Limerick Courses
+// ----------------------------------
+CREATE(:Course{name:"B.Sc. in Agricultural Science", cao:"tuslAS", duration:3, points:275});
+CREATE(:Course{name:"B.Sc. (Hons) in Agricultural Science", cao:"tuslASH", duration:4, points:350});
+CREATE(:Course{name:"B.Sc. in Applied Biology", cao:"tuslAB", duration:3, points:290});
+CREATE(:Course{name:"B.Eng. in Industrial Engineering", cao:"tuslIE", duration:3, points:250});
+CREATE(:Course{name:"B.Eng. (Hons) in Industrial Engineering", cao:"tuslIEH", duration:4, points:250});
+CREATE(:Course{name:"B.Comm. (Hons) in Accounting & Finance", cao:"tuslAFH", duration:4, points:285});
+
+MATCH(c:Course) WHERE c.cao CONTAINS "tusl"
+MATCH(l:Location{location:"Limerick"})
+CREATE(c)-[:PROVIDED_BY]->(l);
+
+
+// ----------------------------------
+// ATU Athlone Students
+// ----------------------------------
+CREATE(:Student{sid:"TUS-L003", name:"Sinead Crowley", gpa:3.3});
+MATCH(s:Student{sid:"TUS-L003"})
+MATCH(c:Course{cao:"tuslAS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L004", name:"Alan Kielty", gpa:3.1});
+MATCH(s:Student{sid:"TUS-L004"})
+MATCH(c:Course{cao:"tuslAS"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L005", name:"Robert McGowan", gpa:3.4});
+MATCH(s:Student{sid:"TUS-L005"})
+MATCH(c:Course{cao:"tuslASH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L006", name:"Francis Butler", gpa:2.4});
+MATCH(s:Student{sid:"TUS-L006"})
+MATCH(c:Course{cao:"tuslIE"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L007", name:"Tom Collins", gpa:3.4});
+MATCH(s:Student{sid:"TUS-L007"})
+MATCH(c:Course{cao:"tuslIEH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L008", name:"Clodagh Murphy", gpa:3.7});
+MATCH(s:Student{sid:"TUS-L008"})
+MATCH(c:Course{cao:"tuslIEH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L011", name:"Tadgh Robins", gpa:3.2});
+MATCH(s:Student{sid:"TUS-L011"})
+MATCH(c:Course{cao:"tuslIEH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L012", name:"Brendan Fowler", gpa:3.2});
+MATCH(s:Student{sid:"TUS-L012"})
+MATCH(c:Course{cao:"tuslIEH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L014", name:"Amanda O'Shea", gpa:2.6});
+MATCH(s:Student{sid:"TUS-L014"})
+MATCH(c:Course{cao:"tuslAFH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L015", name:"Thomas Kennedy", gpa:3.6});
+MATCH(s:Student{sid:"TUS-L015"})
+MATCH(c:Course{cao:"tuslAFH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L016", name:"William O'Connor", gpa:3.7});
+MATCH(s:Student{sid:"TUS-L016"})
+MATCH(c:Course{cao:"tuslAFH"})
+CREATE(s)-[:STUDIES]->(c);
+
+CREATE(:Student{sid:"TUS-L017", name:"Fiona Murphy", gpa:3.7});
+MATCH(s:Student{sid:"TUS-L017"})
+MATCH(c:Course{cao:"tuslAFH"})
+CREATE(s)-[:STUDIES]->(c);
+
+
+// *******************************
+// FRIENDS_WITH
+// *******************************
+MATCH(s:Student{sid:"TUS-L017"})
+MATCH(s1:Student{sid:"TUS-L015"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L017"})
+MATCH(s1:Student{sid:"TUS-L014"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L017"})
+MATCH(s1:Student{sid:"TUS-L008"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L017"})
+MATCH(s1:Student{sid:"TUS-L006"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L017"})
+MATCH(s1:Student{sid:"TUS-A016"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L008"})
+MATCH(s1:Student{sid:"TUS-L014"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L008"})
+MATCH(s1:Student{sid:"ATU-L007"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L003"})
+MATCH(s1:Student{sid:"ATU-G015"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-L003"})
+MATCH(s1:Student{sid:"ATU-G016"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-A007"})
+MATCH(s1:Student{sid:"TUS-A003"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-A007"})
+MATCH(s1:Student{sid:"TUS-A004"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-A007"})
+MATCH(s1:Student{sid:"ATU-S004"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-S012"})
+MATCH(s1:Student{sid:"ATU-S015"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-S012"})
+MATCH(s1:Student{sid:"ATU-S011"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-L001"})
+MATCH(s1:Student{sid:"ATU-L003"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-L001"})
+MATCH(s1:Student{sid:"ATU-L007"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-L006"})
+MATCH(s1:Student{sid:"ATU-L007"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-L006"})
+MATCH(s1:Student{sid:"ATU-L008"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-L006"})
+MATCH(s1:Student{sid:"TUS-A004"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-L006"})
+MATCH(s1:Student{sid:"ATU-S003"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-A011"})
+MATCH(s1:Student{sid:"TUS-L008"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-A016"})
+MATCH(s1:Student{sid:"TUS-A015"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-G011"})
+MATCH(s1:Student{sid:"ATU-L007"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-S011"})
+MATCH(s1:Student{sid:"ATU-S005"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-G006"})
+MATCH(s1:Student{sid:"ATU-G007"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"ATU-G008"})
+MATCH(s1:Student{sid:"ATU-G007"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-A006"})
+MATCH(s1:Student{sid:"TUS-A003"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);
+
+MATCH(s:Student{sid:"TUS-A016"})
+MATCH(s1:Student{sid:"TUS-L011"})
+CREATE(s)-[:FRIENDS_WITH]->(s1);

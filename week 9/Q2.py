@@ -2,13 +2,12 @@
 # Main function
 def main():
 	# Initialise array
-	array = []
+	# array = []
 
 	display_menu()
 	
 	while True:
 		choice = input("Enter choice: ")
-		
 		if (choice == "1"):
 			array = fill_array()
 			display_menu()
