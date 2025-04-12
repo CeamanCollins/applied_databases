@@ -1,7 +1,7 @@
 import pymysql
-from neo4j import GraphDatabase, RoutingControl
+from neo4j import GraphDatabase
 
-URI = "neo4j://localhost"
+URI = "neo4j://localhost:7687"
 AUTH = ("neo4j", "rootroot")
 
 def main():
@@ -104,18 +104,84 @@ def doinsertactor():
             print(f"*** ERROR *** {e}")
 
 def domarried():
-    actorid_input = input("Enter ActorID: ")
+    actorid_input = input("\nEnter ActorID: ")
+
     with GraphDatabase.driver(URI, auth=AUTH) as driver:
-        records = driver.execute_query(
-            "MATCH (p{ActorID: 1})-[:MARRIED_TO]-(q) RETURN p, q",
-            actoridinput="1",
-            database_="actorsmarried"
-        ).records
-    for person in records:
-        print(person)
+        records, _, _ = driver.execute_query(
+            "MATCH (p{ActorID: $actoridinput})-[:MARRIED_TO]-(q) RETURN p{ActorID: p.ActorID}, q{ActorID: q.ActorID}",
+            parameters_={"actoridinput":int(actorid_input)},
+            database_="actorsmarried",
+        )
+    if records == []:
+        print("\n----------------\nThis actor is not married\n")
+    else:
+        ActorID1 = records[0].data()['p']['ActorID']
+        ActorID2 = records[0].data()['q']['ActorID']
+
+        connect()
+        sql_actors = "SELECT ActorID, ActorName FROM actor WHERE ActorID = %s OR ActorID = %s"
+        with conn:
+            cursor = conn.cursor()
+            cursor.execute(sql_actors, (ActorID1, ActorID2))
+            result = cursor.fetchall()
+        print("\n----------------\nThese Actors are married:")
+        for actor in result:
+            print(actor['ActorID'], "|", actor['ActorName'])
+        print("\n")
 
 def doaddmarriage():
-    pass
+    connect()
+    while True:
+        Actor1ID = input("Enter Actor 1 ID: ")
+        Actor2ID = input("Enter Actor 2 ID: ")
+        if Actor1ID == Actor2ID:
+            print("An actor cannot marry him/herself")
+            continue
+        try:
+            Actor1ID = int(Actor1ID)
+            Actor2ID = int(Actor2ID)
+        except ValueError:
+            continue
+        sql = "SELECT * FROM actor"
+        with conn:
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            lastid = result[-1]['ActorID']
+        if Actor1ID < 0 or Actor1ID > int(lastid):
+            print(f"Actor {Actor1ID} does not exist.")
+        if Actor2ID < 0 or Actor2ID > int(lastid):
+            print(f"Actor {Actor2ID} does not exist.")
+        else:
+            break
+        
+
+    with GraphDatabase.driver(URI, auth=AUTH) as driver:
+        records1, summary, _ = driver.execute_query(
+            "MATCH ({ActorID: $Actor1})-[r1:MARRIED_TO]-() RETURN r1",
+            parameters_={"Actor1":Actor1ID},
+            database_="actorsmarried",
+        )
+        if len(records1) == 1:
+            print(f"Actor {Actor1ID} is already married")
+
+    with GraphDatabase.driver(URI, auth=AUTH) as driver:
+        records2, summary, _ = driver.execute_query(
+            "MATCH ({ActorID: $Actor2})-[r1:MARRIED_TO]-() RETURN r1",
+            parameters_={"Actor2":Actor2ID},
+            database_="actorsmarried",
+        )
+        if len(records2) == 1:
+            print(f"Actor {Actor2ID} is already married")
+
+    if len(records1) != 1 and len(records2) != 1:
+        with GraphDatabase.driver(URI, auth=AUTH) as driver:
+            records, summary, _ = driver.execute_query(
+                "CREATE(:Actor{ActorID: $Actor1})-[:MARRIED_TO]->(:Actor{ActorID: $Actor2})",
+                parameters_={"Actor1": Actor1ID,"Actor2": Actor2ID},
+                database_="actorsmarried",
+            )
+        print(f"Actor {Actor1ID} and {Actor2ID} are now married")
 
 def dostudios():
     connect()
