@@ -10,18 +10,21 @@ def main():
         choice = input("Choice: ")
         if choice == 'x':
             break
-        if int(choice) == 1:
-            dodirectorsandfilms()
-        if int(choice) == 2:
-            domonth()
-        if int(choice) == 3:
-            doinsertactor()
-        if int(choice) == 4:
-            domarried()
-        if int(choice) == 5:
-            doaddmarriage()
-        if int(choice) == 6:
-            dostudios()  
+        try:
+            if int(choice) == 1:
+                dodirectorsandfilms()
+            if int(choice) == 2:
+                domonth()
+            if int(choice) == 3:
+                doinsertactor()
+            if int(choice) == 4:
+                domarried()
+            if int(choice) == 5:
+                doaddmarriage()
+            if int(choice) == 6:
+                dostudios()
+        except ValueError:
+            continue
 
 
 def connect():
@@ -56,13 +59,17 @@ def domonth():
     while True:
         month = input("Enter Month: ")
         months = {'jan':1,'feb':2,'mar':3,'apr':4,'may':5,'jun':6,'jul':7,'aug':8,'sep':9,'oct':10,'nov':11,'dec':12}
-        if type(month) == int:
-            if month > 0 and month < 13:
-                break
-        elif month[0:3].lower() in months.keys():
+        if month[0:3].lower() in months.keys():
             month = month[0:3].lower()
             month = months[month]
             break
+        else:
+            try:
+                month = int(month)
+            except ValueError:
+                continue
+            if month > 0 and month < 13:
+                break
     sql_search = "Select ActorName, date(ActorDOB) as ActorDob, ActorGender from actor where month(ActorDOB) = %s"
 
     with conn:
@@ -177,7 +184,7 @@ def doaddmarriage():
     if len(records1) != 1 and len(records2) != 1:
         with GraphDatabase.driver(URI, auth=AUTH) as driver:
             records, summary, _ = driver.execute_query(
-                "CREATE(:Actor{ActorID: $Actor1})-[:MARRIED_TO]->(:Actor{ActorID: $Actor2})",
+                "MERGE(:Actor{ActorID: $Actor1})-[:MARRIED_TO]->(:Actor{ActorID: $Actor2})",
                 parameters_={"Actor1": Actor1ID,"Actor2": Actor2ID},
                 database_="actorsmarried",
             )
