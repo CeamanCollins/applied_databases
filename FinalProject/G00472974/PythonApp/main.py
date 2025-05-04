@@ -197,7 +197,7 @@ def doaddmarriage():
             break
 
     with GraphDatabase.driver(URI, auth=AUTH) as driver:
-        records1, summary, _ = driver.execute_query(
+        records1, _, _ = driver.execute_query(
             "MATCH ({ActorID: $Actor1})-[r1:MARRIED_TO]-() RETURN r1",
             parameters_={"Actor1":Actor1ID},
             database_="actorsmarried",
@@ -206,7 +206,7 @@ def doaddmarriage():
             print(f"Actor {Actor1ID} is already married")
 
     with GraphDatabase.driver(URI, auth=AUTH) as driver:
-        records2, summary, _ = driver.execute_query(
+        records2, _, _ = driver.execute_query(
             "MATCH ({ActorID: $Actor2})-[r1:MARRIED_TO]-() RETURN r1",
             parameters_={"Actor2":Actor2ID},
             database_="actorsmarried",
@@ -216,7 +216,7 @@ def doaddmarriage():
 
     if len(records1) != 1 and len(records2) != 1:
         with GraphDatabase.driver(URI, auth=AUTH) as driver:
-            records, summary, _ = driver.execute_query(
+            driver.execute_query(
                 "MERGE(:Actor{ActorID: $Actor1})-[:MARRIED_TO]->(:Actor{ActorID: $Actor2})",
                 parameters_={"Actor1": Actor1ID,"Actor2": Actor2ID},
                 database_="actorsmarried",
