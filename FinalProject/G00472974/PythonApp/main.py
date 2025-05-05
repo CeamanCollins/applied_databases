@@ -371,11 +371,12 @@ def doupdategenre():
             'Drama': 2,
             'Musical': 5,
             'Romantic': 3,
-            'Other': 6}
+            'Other': 6
+            }
         if selected_genre in genres.keys():
             sql_update_genre = "UPDATE film " \
-                                "SET FilmGenreID = %s " \
-                                "WHERE FilmName = %s;"
+                               "SET FilmGenreID = %s " \
+                               "WHERE FilmName = %s;"
             with conn.cursor() as cursor:
                 cursor.execute(
                     sql_update_genre,
