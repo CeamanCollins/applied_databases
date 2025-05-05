@@ -1,9 +1,11 @@
 import pymysql
 from neo4j import GraphDatabase
 import random
+import textwrap
 
 URI = "neo4j://localhost:7687"
 AUTH = ("neo4j", "rootroot")
+
 
 def main():
     while True:
@@ -14,7 +16,7 @@ def main():
         try:
             choice = int(choice)
         except ValueError:
-            continue  
+            continue
         if choice == 1:
             dodirectorsandfilms()
         if choice == 2:
@@ -29,62 +31,83 @@ def main():
             dostudios()
         if choice == 7:
             dorecommend()
+        if choice == 8:
+            doactorsandfilms()
+        if choice == 9:
+            doupdategenre()
+
 
 def connect():
     global conn
-    conn = pymysql.connect(host="localhost",
-                            user="root", 
-                            password="root", 
-                            database="appdbproj", 
-                            cursorclass=pymysql.cursors.DictCursor)
+    conn = pymysql.connect(
+        host="localhost",
+        user="root",
+        password="root",
+        database="appdbproj",
+        cursorclass=pymysql.cursors.DictCursor
+        )
+
 
 def displaymenu():
-    print("MoviesDB\n--------\n\n" \
-    "MENU\n====\n" \
-    "1 - View Directors & Films\n" \
-    "2 - View Actors by Month of Birth\n" \
-    "3 - Add New Actor\n" \
-    "4 - View Married Actors\n" \
-    "5 - Add Actor Marriage\n" \
-    "6 - View Studios\n" \
-    "7 - Recommend a Film\n" \
-    "x - Exit application")
+    print(
+        "MoviesDB\n--------\n\n"
+        "MENU\n"
+        "====\n"
+        "1 - View Directors & Films\n"
+        "2 - View Actors by Month of Birth\n"
+        "3 - Add New Actor\n"
+        "4 - View Married Actors\n"
+        "5 - Add Actor Marriage\n"
+        "6 - View Studios\n"
+        "7 - Recommend a Film\n"
+        "8 - Search Films by Actor Name\n"
+        "9 - Update Genre\n"
+        "x - Exit application"
+        )
+
 
 def dodirectorsandfilms():
     connect()
     director = input("Enter Director Name: ")
     sql_search = "SELECT d.DirectorName, f.FilmName, s.StudioName " \
-                    "FROM director d " \
-                    "INNER JOIN film f on f.FilmDirectorID = d.DirectorID " \
-                    "INNER JOIN studio s on s.StudioID = f.FilmStudioID " \
-                    "WHERE d.DirectorName LIKE CONCAT('%%' %s '%%');"
+                 "FROM director d " \
+                 "INNER JOIN film f on f.FilmDirectorID = d.DirectorID " \
+                 "INNER JOIN studio s on s.StudioID = f.FilmStudioID " \
+                 "WHERE d.DirectorName LIKE CONCAT('%%' %s '%%');"
     with conn.cursor() as cursor:
         cursor.execute(sql_search, (director))
         results = cursor.fetchall()
         if len(results) == 0:
-            print("\n--------------------------\nNo directors found of that name")
+            print(
+                "\n--------------------------\n"
+                "No directors found of that name"
+                )
         else:
             print("\n--------------------------\n")
             for result in results:
-                print(result['DirectorName'], "|", result['FilmName'], "|", result['StudioName'])
+                print(result['DirectorName'], "|",
+                      result['FilmName'], "|",
+                      result['StudioName']
+                      )
             print("\n--------------------------\n\n")
+
 
 def domonth():
     connect()
     while True:
         month = input("Enter Month: ")
-        months = {'jan':1,
-                  'feb':2,
-                  'mar':3,
-                  'apr':4,
-                  'may':5,
-                  'jun':6,
-                  'jul':7,
-                  'aug':8,
-                  'sep':9,
-                  'oct':10,
-                  'nov':11,
-                  'dec':12
+        months = {'jan': 1,
+                  'feb': 2,
+                  'mar': 3,
+                  'apr': 4,
+                  'may': 5,
+                  'jun': 6,
+                  'jul': 7,
+                  'aug': 8,
+                  'sep': 9,
+                  'oct': 10,
+                  'nov': 11,
+                  'dec': 12
                   }
         if month.lower() in months.keys():
             month = month.lower()
@@ -98,16 +121,19 @@ def domonth():
             if month > 0 and month < 13:
                 break
     sql_search = "SELECT ActorName, date(ActorDOB) " \
-                    "AS ActorDob, ActorGender " \
-                    "FROM actor " \
-                    "WHERE MONTH(ActorDOB) = %s"
+                 "AS ActorDob, ActorGender " \
+                 "FROM actor " \
+                 "WHERE MONTH(ActorDOB) = %s"
     with conn.cursor() as cursor:
         cursor.execute(sql_search, (month,))
         results = cursor.fetchall()
         print("\n--------------------------\n")
         for result in results:
-            print(result['ActorName'], "|", result['ActorDob'], "|", result['ActorGender'])
+            print(result['ActorName'],
+                  "|", result['ActorDob'],
+                  "|", result['ActorGender'])
         print("\n--------------------------\n\n")
+
 
 def doinsertactor():
     connect()
@@ -116,8 +142,9 @@ def doinsertactor():
     dob = input("DOB: ")
     gender = input("Gender: ")
     countryid = input("Country ID: ")
-    sql_insert = "INSERT INTO actor (ActorID, ActorName, ActorDOB, ActorGender, ActorCountryID) " \
-                    "VALUES (%s, %s, %s, %s, %s)"
+    sql_insert = "INSERT INTO actor (ActorID, ActorName, " \
+                 "ActorDOB, ActorGender, ActorCountryID) " \
+                 "VALUES (%s, %s, %s, %s, %s)"
 
     with conn.cursor() as cursor:
         try:
@@ -138,14 +165,15 @@ def doinsertactor():
         except Exception as e:
             print(f"*** ERROR *** {e}")
 
+
 def domarried():
     actorid_input = input("\nEnter ActorID: ")
 
     with GraphDatabase.driver(URI, auth=AUTH) as driver:
         records, _, _ = driver.execute_query(
-            "MATCH (p{ActorID: $actoridinput})-[:MARRIED_TO]-(q) " \
+            "MATCH (p{ActorID: $actoridinput})-[:MARRIED_TO]-(q) "
             "RETURN p{ActorID: p.ActorID}, q{ActorID: q.ActorID}",
-            parameters_={"actoridinput":int(actorid_input)},
+            parameters_={"actoridinput": int(actorid_input)},
             database_="actorsmarried",
         )
     if records == []:
@@ -156,8 +184,8 @@ def domarried():
 
         connect()
         sql_actors = "SELECT ActorID, ActorName " \
-                        "FROM actor " \
-                        "WHERE ActorID = %s OR ActorID = %s"
+                     "FROM actor " \
+                     "WHERE ActorID = %s OR ActorID = %s"
         with conn.cursor() as cursor:
             cursor.execute(sql_actors, (ActorID1, ActorID2))
             result = cursor.fetchall()
@@ -165,6 +193,7 @@ def domarried():
         for actor in result:
             print(actor['ActorID'], "|", actor['ActorName'])
         print("\n")
+
 
 def doaddmarriage():
     connect()
@@ -199,7 +228,7 @@ def doaddmarriage():
     with GraphDatabase.driver(URI, auth=AUTH) as driver:
         records1, _, _ = driver.execute_query(
             "MATCH ({ActorID: $Actor1})-[r1:MARRIED_TO]-() RETURN r1",
-            parameters_={"Actor1":Actor1ID},
+            parameters_={"Actor1": Actor1ID},
             database_="actorsmarried",
         )
         if len(records1) == 1:
@@ -208,7 +237,7 @@ def doaddmarriage():
     with GraphDatabase.driver(URI, auth=AUTH) as driver:
         records2, _, _ = driver.execute_query(
             "MATCH ({ActorID: $Actor2})-[r1:MARRIED_TO]-() RETURN r1",
-            parameters_={"Actor2":Actor2ID},
+            parameters_={"Actor2": Actor2ID},
             database_="actorsmarried",
         )
         if len(records2) == 1:
@@ -217,11 +246,13 @@ def doaddmarriage():
     if len(records1) != 1 and len(records2) != 1:
         with GraphDatabase.driver(URI, auth=AUTH) as driver:
             driver.execute_query(
-                "MERGE(:Actor{ActorID: $Actor1})-[:MARRIED_TO]->(:Actor{ActorID: $Actor2})",
-                parameters_={"Actor1": Actor1ID,"Actor2": Actor2ID},
+                "MERGE(:Actor{ActorID: $Actor1})-"
+                "[:MARRIED_TO]->(:Actor{ActorID: $Actor2})",
+                parameters_={"Actor1": Actor1ID, "Actor2": Actor2ID},
                 database_="actorsmarried",
             )
         print(f"Actor {Actor1ID} and {Actor2ID} are now married")
+
 
 def dostudios():
     global studio_result
@@ -239,6 +270,7 @@ def dostudios():
             for studio in studio_result:
                 print(f"{studio['StudioID']}\t\t|\t{studio['StudioName']}")
 
+
 def dorecommend():
     while True:
         age = input('How old are you? ')
@@ -249,7 +281,8 @@ def dorecommend():
             continue
     if age <= 12:
         while True:
-            parents = input('Are your parent(s)/guardian(s) watching too? (y/n) ').lower()
+            parents = input('Are your parent(s)/'
+                            'guardian(s) watching too? (y/n) ').lower()
             if parents in ['y', 'n']:
                 break
     if age >= 18:
@@ -269,17 +302,97 @@ def dorecommend():
     if age <= 9 and parents == 'n':
         category = 1
     connect()
-    sql_recommend = "SELECT f.FilmName as 'Film Name', c.Certificate " \
+    sql_recommend = "SELECT f.FilmName as 'Film Name', " \
+        "f.FilmSynopsis, c.Certificate " \
         "FROM film f INNER JOIN certificate c " \
         "ON f.FilmCertificateID = c.CertificateID " \
         "WHERE c.CertificateID <= %s;"
     with conn.cursor() as cursor:
-        cursor.execute(sql_recommend,(category))
+        cursor.execute(sql_recommend, (category))
         recommend_result = cursor.fetchall()
-    length = len(recommend_result)
-    selection = random.randint(0,length)
-    print(f"\nRecommended Film: {recommend_result[selection]['Film Name']}\n" \
-          f"Rated: {recommend_result[selection]['Certificate']}\n")
+    length = len(recommend_result)-1
+    selection = random.randint(0, length)
+    print(f"\nRecommended Film: {recommend_result[selection]['Film Name']}\n"
+          f"Rated: {recommend_result[selection]['Certificate']}")
+    print("Synopsis:", end="")
+    wrapped_text = textwrap.wrap(
+                                recommend_result[selection]['FilmSynopsis'],
+                                width=65
+                                )
+    print(wrapped_text[0])
+    for line in wrapped_text[1:]:
+        print("\t", line)
+    print("\n\n")
+
+
+def doactorsandfilms():
+    actor = input("Enter Actor Name: ")
+    connect()
+    sql_actors = "SELECT a.ActorName, fc.CastCharacterName, f.FilmName " \
+                 "FROM actor a " \
+                 "INNER JOIN filmcast fc ON fc.CastActorID = a.ActorID " \
+                 "INNER JOIN film f ON fc.CastFilmID = f.FilmID " \
+                 "WHERE a.ActorName LIKE CONCAT ('%%' %s '%%');"
+    with conn.cursor() as cursor:
+        cursor.execute(sql_actors, (actor))
+        results = cursor.fetchall()
+        print("\n--------------------------\n")
+        print("Actor Name | Character Name | Film Name")
+        print("-----------|----------------|----------")
+        for result in results:
+            print(
+                result['ActorName'],
+                "|",
+                result['CastCharacterName'],
+                "|", result['FilmName']
+                )
+        print("\n--------------------------\n\n")
+
+
+def doupdategenre():
+    connect()
+    sql_populate_genre = "SELECT f.FilmName, g.GenreName " \
+                         "FROM film f " \
+                         "INNER JOIN genre g " \
+                         "ON f.FilmGenreID = g.GenreId " \
+                         "WHERE g.GenreName = 'Other';"
+    with conn.cursor() as cursor:
+        cursor.execute(sql_populate_genre)
+        results = cursor.fetchall()
+    selection = random.randint(0, len(results)-1)
+    filmname = results[selection]['FilmName']
+    print("Film:", filmname)
+    print("Action, Comedy, Drama, Musical, Romantic, Other")
+    while True:
+        selected_genre = input("Enter Genre: ").capitalize()
+        genres = {
+            'Action': 1,
+            'Comedy': 4,
+            'Drama': 2,
+            'Musical': 5,
+            'Romantic': 3,
+            'Other': 6}
+        if selected_genre in genres.keys():
+            sql_update_genre = "UPDATE film " \
+                                "SET FilmGenreID = %s " \
+                                "WHERE FilmName = %s;"
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    sql_update_genre,
+                    (genres[selected_genre], filmname)
+                    )
+                conn.commit()
+            print("\n--------------------------\n")
+            print("Genre updated:")
+            print(f"Film {filmname} updated to {selected_genre}")
+            print("\n--------------------------\n")
+            break
+        else:
+            print("\n--------------------------\n")
+            print(f"Genre {selected_genre} does not exist. "
+                  f"Please choose from the following: ")
+            print("Action, Comedy, Drama, Musical, Romantic, Other")
+            print("\n--------------------------\n")
 
 if __name__ == "__main__":
     main()
