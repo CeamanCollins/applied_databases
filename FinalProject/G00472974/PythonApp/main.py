@@ -174,7 +174,7 @@ def domarried():
             "MATCH (p{ActorID: $actoridinput})-[:MARRIED_TO]-(q) "
             "RETURN p{ActorID: p.ActorID}, q{ActorID: q.ActorID}",
             parameters_={"actoridinput": int(actorid_input)},
-            database_="actorsmarried",
+            # database_="actorsmarried"
         )
     if records == []:
         print("\n----------------\nThis actor is not married\n")
@@ -229,7 +229,7 @@ def doaddmarriage():
         records1, _, _ = driver.execute_query(
             "MATCH ({ActorID: $Actor1})-[r1:MARRIED_TO]-() RETURN r1",
             parameters_={"Actor1": Actor1ID},
-            database_="actorsmarried",
+            # database_="actorsmarried",
         )
         if len(records1) == 1:
             print(f"Actor {Actor1ID} is already married")
@@ -238,7 +238,7 @@ def doaddmarriage():
         records2, _, _ = driver.execute_query(
             "MATCH ({ActorID: $Actor2})-[r1:MARRIED_TO]-() RETURN r1",
             parameters_={"Actor2": Actor2ID},
-            database_="actorsmarried",
+            # database_="actorsmarried",
         )
         if len(records2) == 1:
             print(f"Actor {Actor2ID} is already married")
@@ -249,7 +249,7 @@ def doaddmarriage():
                 "MERGE(:Actor{ActorID: $Actor1})-"
                 "[:MARRIED_TO]->(:Actor{ActorID: $Actor2})",
                 parameters_={"Actor1": Actor1ID, "Actor2": Actor2ID},
-                database_="actorsmarried",
+                # database_="actorsmarried",
             )
         print(f"Actor {Actor1ID} and {Actor2ID} are now married")
 
